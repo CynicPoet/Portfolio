@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --no-src-dir --import-alias \"@/*\" --yes)",
+      "Bash(npx create-next-app@14 . --typescript --tailwind --eslint --app --no-src-dir --import-alias \"@/*\" --yes)",
+      "Read(//c/Storage/College/Capstone/digital Portfolio/**)",
+      "Bash(npx create-next-app@14 nextjs-temp --typescript --tailwind --eslint --app --no-src-dir --import-alias \"@/*\" --yes)",
+      "Bash(cp -r nextjs-temp/. portfolio/)",
+      "Bash(rm -rf nextjs-temp)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(node -e \"const ri = require\\('react-icons/si'\\); console.log\\(Object.keys\\(ri\\).filter\\(k => k.toLowerCase\\(\\).includes\\('link'\\)\\).join\\('\\\\n'\\)\\)\")",
+      "Bash(find \"c:/Storage/College/Capstone/digital Portfolio/portfolio/node_modules/react-icons/si\" -name \"index.d.ts\" -exec grep -i \"linkedin\" {} \\\\;)",
+      "Bash(python3 -c ' *)",
+      "Bash(python -c ' *)",
+      "Bash(curl -sL \"https://images.credly.com/badges/b4674fda-9033-4de5-8785-6981f7abc4a5/image.png\" -o aws_saa_badge.png --max-time 15 -w \"HTTP %{http_code} | Size %{size_download}\\\\n\")",
+      "Bash(curl -sL \"https://images.credly.com/badges/33e035ba-31fe-49b5-bf46-2b55de4b2481/image.png\" -o terraform_badge.png --max-time 15 -w \"HTTP %{http_code} | Size %{size_download}\\\\n\")",
+      "Bash(curl -sL \"https://images.credly.com/badges/463ea3b0-0771-492c-93b9-239f0374ba11/image.png\" -o rhcsa2_badge.png --max-time 15 -w \"HTTP %{http_code} | Size %{size_download}\\\\n\")",
+      "Bash(curl -sL \"https://images.credly.com/badges/1e2d9c31-23f8-4577-aba6-b0a6d54ead7d/image.png\" -o aws_restart_badge.png --max-time 15 -w \"HTTP %{http_code} | Size %{size_download}\\\\n\")",
+      "Bash(curl -sL -A 'Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0.0.0 Safari/537.36' https://images.credly.com/badges/b4674fda-9033-4de5-8785-6981f7abc4a5/image.png -o aws_saa_badge.png --max-time 15 -w 'HTTP %{http_code} | Size %{size_download}\\\\n')",
+      "Bash(curl -sL -A Mozilla/5.0 https://www.credly.com/badges/b4674fda-9033-4de5-8785-6981f7abc4a5/public/image.png -o aws_saa_badge2.png --max-time 15 -w 'HTTP %{http_code} | Size %{size_download}\\\\n')",
+      "Bash(curl -sL \"https://www.credly.com/badges/b4674fda-9033-4de5-8785-6981f7abc4a5.json\" --max-time 10)",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(d.get\\('badge',{}\\).get\\('image_url',''\\) or d\\)\")",
+      "Bash(node -e ' *)"
+    ]
+  }
+}
