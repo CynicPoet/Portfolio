@@ -4,7 +4,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://shivam-pokharkar.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://portfolio-three-murex-19.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

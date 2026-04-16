@@ -34,3 +34,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Profile documents (private — do not commit)
+My Profile/
+README.md.bak

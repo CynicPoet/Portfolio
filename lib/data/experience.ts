@@ -24,7 +24,7 @@ export const experience: ExperienceEntry[] = [
     role: "SOC Analyst Intern",
     company: "Maharashtra Cyber",
     companyFull: "Maharashtra Cyber — Government of Maharashtra",
-    duration: "June 2025 – December 2025",
+    duration: "June 2025 – December 2025 (7 Months)",
     startDate: "2025-06-04",
     endDate: "2025-12-14",
     location: "Mumbai, Maharashtra (On-Site)",

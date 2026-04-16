@@ -9,7 +9,7 @@ const stats = [
   { value: "8.53", label: "CGPA", sub: "MIT Academy of Engineering" },
   { value: "9.80", label: "SGPA Sem 7", sub: "Highest semester" },
   { value: "88%", label: "MTTR Reduction", sub: "Capstone project" },
-  { value: "6", label: "Months SOC", sub: "Maharashtra Cyber (Govt)" },
+  { value: "7", label: "Months SOC", sub: "Maharashtra Cyber (Govt)" },
   { value: "$0.02", label: "AWS Cost/mo", sub: "Capstone serverless arch" },
   { value: "2024", label: "SIH Finalist", sub: "Smart India Hackathon" },
 ];
@@ -142,7 +142,7 @@ export default function About() {
             >
               I interned for{" "}
               <span style={{ color: "var(--accent-gold)", fontWeight: 600 }}>
-                6 months as a SOC Analyst at Maharashtra Cyber
+                7 months as a SOC Analyst at Maharashtra Cyber
               </span>{" "}
               — the Government of Maharashtra&apos;s cyber crime unit — working on
               real-world SIEM monitoring, OSINT investigations, and threat intelligence
