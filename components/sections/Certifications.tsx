@@ -2,153 +2,85 @@
 
 import { motion } from "framer-motion";
 import { ExternalLink, CheckCircle, Clock } from "lucide-react";
-import { SiTryhackme, SiCisco } from "react-icons/si";
+import { SiTryhackme, SiCisco, SiHashicorp, SiRedhat } from "react-icons/si";
+import { FaAws } from "react-icons/fa";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { certifications } from "@/lib/data/certifications";
 import type { Certification } from "@/lib/data/certifications";
 
 function CertLogo({ cert }: { cert: Certification }) {
-  const size = 64;
+  const boxSize = 64;
 
-  if (cert.credlyBadgeId) {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src={`https://images.credly.com/size/220x220/badges/${cert.credlyBadgeId}/image.png`}
-        alt={`${cert.shortName} badge`}
-        width={size}
-        height={size}
-        style={{ objectFit: "contain", display: "block" }}
-      />
-    );
-  }
+  const iconMap: Record<string, React.ReactNode> = {
+    "aws-saa": <FaAws size={34} color="#FF9900" />,
+    terraform: <SiHashicorp size={30} color="#7C3AED" />,
+    "rhcsa-ii": <SiRedhat size={30} color="#EE0000" />,
+    "tryhackme-jr-pentester": <SiTryhackme size={28} color="#1DB954" />,
+    ccna: <SiCisco size={30} color="#049FD9" />,
+  };
 
-  if (cert.id === "tryhackme-jr-pentester") {
+  const icon = iconMap[cert.id];
+  if (icon) {
     return (
       <div
         style={{
-          width: size,
-          height: size,
+          width: boxSize,
+          height: boxSize,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          borderRadius: "10px",
+          borderRadius: "12px",
           background: cert.brandColorBg,
           border: `1px solid ${cert.brandColor}40`,
         }}
       >
-        <SiTryhackme size={32} color={cert.brandColor} />
+        {icon}
       </div>
     );
   }
 
-  if (cert.id === "ccna") {
-    return (
-      <div
-        style={{
-          width: size,
-          height: size,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          borderRadius: "10px",
-          background: cert.brandColorBg,
-          border: `1px solid ${cert.brandColor}40`,
-        }}
-      >
-        <SiCisco size={36} color={cert.brandColor} />
-      </div>
-    );
-  }
-
-  if (cert.id === "sc-200") {
-    return (
-      <div
-        style={{
-          width: size,
-          height: size,
-          borderRadius: "10px",
-          background: cert.brandColorBg,
-          border: `1px solid ${cert.brandColor}40`,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "2px",
-        }}
-      >
-        <span
-          style={{
-            fontFamily: "var(--font-sora)",
-            fontWeight: 800,
-            fontSize: "11px",
-            color: cert.brandColor,
-            letterSpacing: "0.03em",
-          }}
-        >
-          SC-200
-        </span>
-        <span
-          style={{
-            fontSize: "8px",
-            color: cert.brandColor,
-            fontFamily: "var(--font-mono)",
-            opacity: 0.75,
-          }}
-        >
-          Microsoft
-        </span>
-      </div>
-    );
-  }
-
-  /* CEH, NPTEL and any other — styled text badge */
-  const abbr =
+  /* CEH, NPTEL, SC-200 — styled text badges */
+  type Line = { text: string; mono?: boolean; sub?: boolean };
+  const lines: Line[] =
     cert.id === "ceh-v13"
-      ? "CEH"
+      ? [{ text: "CEH" }, { text: "v13", mono: true, sub: true }]
       : cert.id === "nptel-cloud"
-      ? "NPTEL"
-      : cert.issuer.split(" ")[0]?.slice(0, 3).toUpperCase() ?? "???";
+      ? [{ text: "NPTEL", sub: false }, { text: "IIT KGP", mono: true, sub: true }]
+      : cert.id === "sc-200"
+      ? [{ text: "SC-200" }, { text: "Microsoft", mono: true, sub: true }]
+      : [{ text: cert.shortName.slice(0, 6) }];
 
   return (
     <div
       style={{
-        width: size,
-        height: size,
-        borderRadius: "10px",
+        width: boxSize,
+        height: boxSize,
+        borderRadius: "12px",
         background: cert.brandColorBg,
         border: `1px solid ${cert.brandColor}40`,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        gap: "2px",
+        gap: "3px",
       }}
     >
-      <span
-        style={{
-          fontFamily: "var(--font-sora)",
-          fontWeight: 800,
-          fontSize: cert.id === "nptel-cloud" ? "10px" : "13px",
-          color: cert.brandColor,
-          letterSpacing: "0.04em",
-          lineHeight: 1,
-        }}
-      >
-        {abbr}
-      </span>
-      {cert.id === "ceh-v13" && (
+      {lines.map((l) => (
         <span
+          key={l.text}
           style={{
-            fontSize: "8px",
+            fontFamily: l.mono ? "var(--font-mono)" : "var(--font-sora)",
+            fontWeight: 800,
+            fontSize: l.sub ? "8px" : cert.id === "nptel-cloud" ? "11px" : "14px",
             color: cert.brandColor,
-            fontFamily: "var(--font-mono)",
-            opacity: 0.8,
+            letterSpacing: "0.04em",
+            lineHeight: 1,
+            opacity: l.sub ? 0.7 : 1,
           }}
         >
-          v13
+          {l.text}
         </span>
-      )}
+      ))}
     </div>
   );
 }
