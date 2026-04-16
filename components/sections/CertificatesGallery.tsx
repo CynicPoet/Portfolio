@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { X, ZoomIn, Download, ExternalLink } from "lucide-react";
+import { X, ZoomIn, Download, ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
 import SectionHeading from "@/components/ui/SectionHeading";
 
 interface GalleryItem {
@@ -60,6 +60,7 @@ const galleryItems: GalleryItem[] = [
     issuer: "HashiCorp",
     date: "March 19, 2025",
     image: "/certificates/terraform_associate_cert.jpg",
+    verifyUrl: "https://www.credly.com/badges/33e035ba-31fe-49b5-bf46-2b55de4b2481",
     tag: "IaC",
     tagColor: "#7C3AED",
   },
@@ -87,8 +88,38 @@ const galleryItems: GalleryItem[] = [
   },
 ];
 
+const TAG_COLORS: Record<string, { bg: string; border: string }> = {};
+galleryItems.forEach((item) => {
+  TAG_COLORS[item.id] = {
+    bg: `${item.tagColor}18`,
+    border: `${item.tagColor}55`,
+  };
+});
+
 export default function CertificatesGallery() {
-  const [lightbox, setLightbox] = useState<GalleryItem | null>(null);
+  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+
+  const lightbox = lightboxIdx !== null ? galleryItems[lightboxIdx] : null;
+
+  const prev = useCallback(() => {
+    setLightboxIdx((i) => (i === null ? null : (i - 1 + galleryItems.length) % galleryItems.length));
+  }, []);
+
+  const next = useCallback(() => {
+    setLightboxIdx((i) => (i === null ? null : (i + 1) % galleryItems.length));
+  }, []);
+
+  useEffect(() => {
+    if (lightboxIdx === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLightboxIdx(null);
+      if (e.key === "ArrowLeft") prev();
+      if (e.key === "ArrowRight") next();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [lightboxIdx, prev, next]);
 
   return (
     <section
@@ -100,14 +131,15 @@ export default function CertificatesGallery() {
         <SectionHeading
           label="Official Documents"
           title="Certificates & Letters"
-          subtitle="Government-issued letters, industry certifications, and hackathon recognitions — all verified originals."
+          subtitle="Government-issued letters, industry certifications, and hackathon recognitions — verified originals."
+          centered
         />
 
         <div
           style={{
             display: "grid",
             gridTemplateColumns: "1fr",
-            gap: "20px",
+            gap: "24px",
             marginTop: "56px",
           }}
           className="sm:grid-cols-2 lg:grid-cols-3"
@@ -119,27 +151,27 @@ export default function CertificatesGallery() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-40px" }}
               transition={{ duration: 0.4, delay: i * 0.08 }}
-              onClick={() => setLightbox(item)}
+              onHoverStart={() => setHoveredId(item.id)}
+              onHoverEnd={() => setHoveredId(null)}
+              onClick={() => setLightboxIdx(i)}
               style={{
                 background: "var(--bg-card)",
                 border: item.highlight
-                  ? `1px solid ${item.tagColor}40`
+                  ? `1px solid ${item.tagColor}50`
                   : "1px solid var(--border-subtle)",
-                borderRadius: "14px",
+                borderRadius: "16px",
                 overflow: "hidden",
                 cursor: "pointer",
-                transition: "all 0.3s ease",
-                boxShadow: item.highlight
-                  ? `0 0 20px ${item.tagColor}15`
-                  : "none",
+                boxShadow: item.highlight ? `0 0 24px ${item.tagColor}12` : "none",
               }}
               whileHover={{
-                y: -4,
-                borderColor: item.tagColor + "80",
-                boxShadow: `0 8px 32px ${item.tagColor}20`,
+                y: -6,
+                borderColor: item.tagColor + "99",
+                boxShadow: `0 12px 40px ${item.tagColor}22`,
+                transition: { duration: 0.25 },
               }}
             >
-              {/* Certificate image */}
+              {/* Certificate image with hover overlay */}
               <div
                 style={{
                   position: "relative",
@@ -153,26 +185,43 @@ export default function CertificatesGallery() {
                   src={item.image}
                   alt={item.title}
                   fill
-                  style={{ objectFit: "cover", transition: "transform 0.4s ease" }}
+                  style={{
+                    objectFit: "cover",
+                    transition: "transform 0.4s ease",
+                    transform: hoveredId === item.id ? "scale(1.04)" : "scale(1)",
+                  }}
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 />
-                {/* Overlay on hover */}
-                <div
+
+                {/* Hover overlay */}
+                <motion.div
+                  animate={{ opacity: hoveredId === item.id ? 1 : 0 }}
+                  transition={{ duration: 0.2 }}
                   style={{
                     position: "absolute",
                     inset: 0,
-                    background: "rgba(3,7,18,0.6)",
+                    background: "rgba(3,7,18,0.65)",
                     display: "flex",
+                    flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center",
-                    opacity: 0,
-                    transition: "opacity 0.3s ease",
+                    gap: "8px",
                   }}
-                  className="cert-hover-overlay"
                 >
-                  <ZoomIn size={32} style={{ color: "var(--accent-gold)" }} />
-                </div>
-                {/* Tag */}
+                  <ZoomIn size={36} style={{ color: "var(--accent-gold)" }} />
+                  <span
+                    style={{
+                      color: "var(--accent-gold)",
+                      fontFamily: "var(--font-sora)",
+                      fontWeight: 600,
+                      fontSize: "13px",
+                    }}
+                  >
+                    View Full
+                  </span>
+                </motion.div>
+
+                {/* Tag chip */}
                 <div
                   style={{
                     position: "absolute",
@@ -180,7 +229,7 @@ export default function CertificatesGallery() {
                     left: "12px",
                     padding: "4px 10px",
                     borderRadius: "999px",
-                    fontSize: "11px",
+                    fontSize: "10px",
                     fontWeight: 700,
                     letterSpacing: "0.08em",
                     textTransform: "uppercase",
@@ -188,36 +237,77 @@ export default function CertificatesGallery() {
                     border: `1px solid ${item.tagColor}60`,
                     color: item.tagColor,
                     backdropFilter: "blur(8px)",
+                    zIndex: 2,
                   }}
                 >
                   {item.tag}
                 </div>
+
+                {/* Highlight star */}
+                {item.highlight && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "12px",
+                      right: "12px",
+                      width: "8px",
+                      height: "8px",
+                      borderRadius: "50%",
+                      background: item.tagColor,
+                      boxShadow: `0 0 8px ${item.tagColor}`,
+                      zIndex: 2,
+                    }}
+                    aria-hidden="true"
+                  />
+                )}
               </div>
 
-              {/* Info */}
-              <div style={{ padding: "18px 20px" }}>
+              {/* Card info */}
+              <div style={{ padding: "18px 20px 16px" }}>
                 <h3
                   style={{
                     fontFamily: "var(--font-sora)",
                     fontWeight: 700,
-                    fontSize: "0.88rem",
+                    fontSize: "0.875rem",
                     color: "var(--text-primary)",
                     lineHeight: 1.4,
-                    marginBottom: "6px",
+                    marginBottom: "5px",
                   }}
                 >
                   {item.title}
                 </h3>
-                <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "4px" }}>
+                <p
+                  style={{
+                    fontSize: "12px",
+                    color: "var(--text-secondary)",
+                    marginBottom: "3px",
+                    lineHeight: 1.4,
+                  }}
+                >
                   {item.issuer}
                 </p>
-                <p style={{ fontSize: "11px", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
+                <p
+                  style={{
+                    fontSize: "11px",
+                    color: "var(--text-muted)",
+                    fontFamily: "var(--font-mono)",
+                    marginBottom: "14px",
+                  }}
+                >
                   {item.date}
                 </p>
 
-                <div style={{ display: "flex", gap: "10px", marginTop: "12px", flexWrap: "wrap" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "14px",
+                    alignItems: "center",
+                    borderTop: "1px solid var(--border-subtle)",
+                    paddingTop: "12px",
+                  }}
+                >
                   <button
-                    onClick={(e) => { e.stopPropagation(); setLightbox(item); }}
+                    onClick={(e) => { e.stopPropagation(); setLightboxIdx(i); }}
                     style={{
                       background: "none",
                       border: "none",
@@ -235,6 +325,7 @@ export default function CertificatesGallery() {
                   >
                     <ZoomIn size={13} /> View
                   </button>
+
                   {item.pdfUrl && (
                     <a
                       href={item.pdfUrl}
@@ -255,6 +346,7 @@ export default function CertificatesGallery() {
                       <Download size={13} /> Download
                     </a>
                   )}
+
                   {item.verifyUrl && (
                     <a
                       href={item.verifyUrl}
@@ -270,6 +362,7 @@ export default function CertificatesGallery() {
                         textDecoration: "none",
                         fontFamily: "var(--font-sora)",
                         fontWeight: 500,
+                        marginLeft: "auto",
                       }}
                       aria-label={`Verify ${item.title}`}
                     >
@@ -285,75 +378,149 @@ export default function CertificatesGallery() {
 
       {/* Lightbox */}
       <AnimatePresence>
-        {lightbox && (
+        {lightbox && lightboxIdx !== null && (
           <motion.div
+            key="lightbox-backdrop"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            onClick={() => setLightbox(null)}
+            transition={{ duration: 0.2 }}
+            onClick={() => setLightboxIdx(null)}
             style={{
               position: "fixed",
               inset: 0,
               zIndex: 1000,
               background: "rgba(3,7,18,0.96)",
-              backdropFilter: "blur(12px)",
+              backdropFilter: "blur(14px)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              padding: "20px",
+              padding: "16px",
             }}
             role="dialog"
             aria-label={`Viewing: ${lightbox.title}`}
           >
+            {/* Prev / Next */}
+            {[
+              { fn: prev, Icon: ChevronLeft, side: "left" as const },
+              { fn: next, Icon: ChevronRight, side: "right" as const },
+            ].map(({ fn, Icon, side }) => (
+              <button
+                key={side}
+                onClick={(e) => { e.stopPropagation(); fn(); }}
+                style={{
+                  position: "absolute",
+                  [side]: "16px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  zIndex: 10,
+                  background: "rgba(17,24,39,0.85)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "10px",
+                  padding: "12px",
+                  cursor: "pointer",
+                  color: "var(--text-primary)",
+                  display: "flex",
+                  backdropFilter: "blur(8px)",
+                  transition: "all 0.2s ease",
+                }}
+                aria-label={side === "left" ? "Previous certificate" : "Next certificate"}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--accent-gold)";
+                  (e.currentTarget as HTMLButtonElement).style.color = "var(--accent-gold)";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border)";
+                  (e.currentTarget as HTMLButtonElement).style.color = "var(--text-primary)";
+                }}
+              >
+                <Icon size={22} />
+              </button>
+            ))}
+
             <motion.div
-              initial={{ scale: 0.88, opacity: 0 }}
+              key={`lightbox-${lightboxIdx}`}
+              initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.88, opacity: 0 }}
-              transition={{ duration: 0.3, type: "spring", stiffness: 200, damping: 22 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.25, type: "spring", stiffness: 220, damping: 24 }}
               onClick={(e) => e.stopPropagation()}
               style={{
                 background: "var(--bg-card)",
-                border: "1px solid var(--border)",
-                borderRadius: "16px",
+                border: `1px solid ${lightbox.tagColor}50`,
+                borderRadius: "18px",
                 overflow: "hidden",
-                maxWidth: "860px",
+                maxWidth: "880px",
                 width: "100%",
-                maxHeight: "90vh",
+                maxHeight: "92vh",
                 display: "flex",
                 flexDirection: "column",
-                boxShadow: "var(--glow-gold)",
+                boxShadow: `0 0 60px ${lightbox.tagColor}18, var(--glow-gold)`,
               }}
             >
               {/* Header */}
               <div
                 style={{
-                  padding: "16px 20px",
+                  padding: "14px 18px",
                   borderBottom: "1px solid var(--border-subtle)",
                   display: "flex",
                   alignItems: "flex-start",
                   justifyContent: "space-between",
-                  gap: "16px",
+                  gap: "12px",
+                  background: "var(--bg-card)",
                 }}
               >
-                <div>
+                <div style={{ minWidth: 0 }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    <span
+                      style={{
+                        padding: "2px 8px",
+                        borderRadius: "999px",
+                        fontSize: "9px",
+                        fontWeight: 700,
+                        letterSpacing: "0.08em",
+                        textTransform: "uppercase",
+                        background: `${lightbox.tagColor}22`,
+                        border: `1px solid ${lightbox.tagColor}55`,
+                        color: lightbox.tagColor,
+                      }}
+                    >
+                      {lightbox.tag}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: "11px",
+                        color: "var(--text-muted)",
+                        fontFamily: "var(--font-mono)",
+                      }}
+                    >
+                      {lightboxIdx + 1} / {galleryItems.length}
+                    </span>
+                  </div>
                   <h3
                     style={{
                       fontFamily: "var(--font-sora)",
                       fontWeight: 700,
-                      fontSize: "1rem",
+                      fontSize: "0.95rem",
                       color: "var(--text-primary)",
-                      marginBottom: "4px",
+                      marginBottom: "2px",
                     }}
                   >
                     {lightbox.title}
                   </h3>
-                  <p style={{ fontSize: "13px", color: "var(--text-secondary)" }}>
+                  <p style={{ fontSize: "12px", color: "var(--text-secondary)" }}>
                     {lightbox.issuer} · {lightbox.date}
                   </p>
                 </div>
                 <button
-                  onClick={() => setLightbox(null)}
+                  onClick={() => setLightboxIdx(null)}
                   style={{
                     background: "var(--bg-secondary)",
                     border: "1px solid var(--border-subtle)",
@@ -383,10 +550,13 @@ export default function CertificatesGallery() {
               <div
                 style={{
                   flex: 1,
-                  overflow: "auto",
+                  overflow: "hidden",
                   position: "relative",
-                  minHeight: "300px",
-                  background: "var(--bg-secondary)",
+                  minHeight: "280px",
+                  background: "#0a0e1a",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
                 <Image
@@ -394,19 +564,21 @@ export default function CertificatesGallery() {
                   alt={lightbox.title}
                   fill
                   style={{ objectFit: "contain" }}
-                  sizes="860px"
+                  sizes="880px"
                   priority
                 />
               </div>
 
-              {/* Footer actions */}
+              {/* Footer */}
               <div
                 style={{
-                  padding: "14px 20px",
+                  padding: "12px 18px",
                   borderTop: "1px solid var(--border-subtle)",
                   display: "flex",
-                  gap: "12px",
+                  gap: "10px",
                   flexWrap: "wrap",
+                  alignItems: "center",
+                  background: "var(--bg-card)",
                 }}
               >
                 {lightbox.pdfUrl && (
@@ -414,10 +586,10 @@ export default function CertificatesGallery() {
                     href={lightbox.pdfUrl}
                     download
                     className="btn-outline-gold"
-                    style={{ padding: "8px 18px", fontSize: "13px" }}
+                    style={{ padding: "7px 16px", fontSize: "12px" }}
                     aria-label="Download certificate"
                   >
-                    <Download size={14} /> Download
+                    <Download size={13} /> Download
                   </a>
                 )}
                 {lightbox.verifyUrl && (
@@ -426,41 +598,62 @@ export default function CertificatesGallery() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn-outline-gold"
-                    style={{ padding: "8px 18px", fontSize: "13px", borderColor: "var(--accent-cyan)", color: "var(--accent-cyan)" }}
+                    style={{
+                      padding: "7px 16px",
+                      fontSize: "12px",
+                      borderColor: "var(--accent-cyan)",
+                      color: "var(--accent-cyan)",
+                    }}
                     aria-label="Verify certificate"
                   >
-                    <ExternalLink size={14} /> Verify Certificate
+                    <ExternalLink size={13} /> Verify
                   </a>
                 )}
-                <button
-                  onClick={() => setLightbox(null)}
+                <div
                   style={{
                     marginLeft: "auto",
-                    background: "none",
-                    border: "1px solid var(--border-subtle)",
-                    borderRadius: "6px",
-                    padding: "8px 16px",
-                    cursor: "pointer",
-                    color: "var(--text-muted)",
-                    fontSize: "13px",
-                    fontFamily: "var(--font-sora)",
+                    display: "flex",
+                    gap: "8px",
                   }}
-                  aria-label="Close lightbox"
                 >
-                  Close
-                </button>
+                  <button
+                    onClick={prev}
+                    style={{
+                      background: "none",
+                      border: "1px solid var(--border-subtle)",
+                      borderRadius: "6px",
+                      padding: "7px 10px",
+                      cursor: "pointer",
+                      color: "var(--text-muted)",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                    aria-label="Previous"
+                  >
+                    <ChevronLeft size={15} />
+                  </button>
+                  <button
+                    onClick={next}
+                    style={{
+                      background: "none",
+                      border: "1px solid var(--border-subtle)",
+                      borderRadius: "6px",
+                      padding: "7px 10px",
+                      cursor: "pointer",
+                      color: "var(--text-muted)",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                    aria-label="Next"
+                  >
+                    <ChevronRight size={15} />
+                  </button>
+                </div>
               </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-
-      <style>{`
-        .cert-hover-overlay { }
-        [data-radix-popper-content-wrapper] { pointer-events: none; }
-        .sm\\:grid-cols-2:hover .cert-hover-overlay,
-        div:hover > div > .cert-hover-overlay { opacity: 1 !important; }
-      `}</style>
     </section>
   );
 }

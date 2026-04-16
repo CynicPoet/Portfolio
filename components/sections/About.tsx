@@ -159,7 +159,7 @@ export default function About() {
             >
               I hold certifications in{" "}
               <span style={{ color: "var(--accent-cyan)", fontWeight: 600 }}>
-                AWS SAA (score 774), HashiCorp Terraform Associate, CEH v13
+                AWS SAA, HashiCorp Terraform Associate, CEH v13
               </span>
               , and TryHackMe Jr. Penetration Tester. My capstone project — an
               Automated Cloud Security Response System — reduced MTTR by 88% at

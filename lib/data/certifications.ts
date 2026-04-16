@@ -11,8 +11,8 @@ export interface Certification {
   brandColor: string;
   brandColorBg: string;
   status: "active" | "in-progress";
-  score?: string;
   trainingCenter?: string;
+  credlyBadgeId?: string;
 }
 
 export const certifications: Certification[] = [
@@ -29,7 +29,7 @@ export const certifications: Certification[] = [
     brandColor: "#FF9900",
     brandColorBg: "rgba(255,153,0,0.1)",
     status: "active",
-    score: "774 / 1000 (Pass: 720)",
+    credlyBadgeId: "b4674fda-9033-4de5-8785-6981f7abc4a5",
   },
   {
     id: "terraform",
@@ -39,10 +39,11 @@ export const certifications: Certification[] = [
     issueDate: "March 19, 2025",
     validUntil: "March 19, 2028",
     certNumber: "33e035ba-31fe-49b5-bf46-2b55de4b2481",
-    verifyUrl: "https://www.credly.com",
+    verifyUrl: "https://www.credly.com/badges/33e035ba-31fe-49b5-bf46-2b55de4b2481",
     brandColor: "#7C3AED",
     brandColorBg: "rgba(124,58,237,0.1)",
     status: "active",
+    credlyBadgeId: "33e035ba-31fe-49b5-bf46-2b55de4b2481",
   },
   {
     id: "ceh-v13",
@@ -85,9 +86,11 @@ export const certifications: Certification[] = [
     shortName: "RHCSA II",
     issuer: "Red Hat",
     issueDate: "2024",
+    verifyUrl: "https://www.credly.com/badges/463ea3b0-0771-492c-93b9-239f0374ba11",
     brandColor: "#EE0000",
     brandColorBg: "rgba(238,0,0,0.1)",
     status: "active",
+    credlyBadgeId: "463ea3b0-0771-492c-93b9-239f0374ba11",
   },
   {
     id: "nptel-cloud",

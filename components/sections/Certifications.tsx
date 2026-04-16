@@ -2,8 +2,156 @@
 
 import { motion } from "framer-motion";
 import { ExternalLink, CheckCircle, Clock } from "lucide-react";
+import { SiTryhackme, SiCisco } from "react-icons/si";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { certifications } from "@/lib/data/certifications";
+import type { Certification } from "@/lib/data/certifications";
+
+function CertLogo({ cert }: { cert: Certification }) {
+  const size = 64;
+
+  if (cert.credlyBadgeId) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={`https://images.credly.com/size/220x220/badges/${cert.credlyBadgeId}/image.png`}
+        alt={`${cert.shortName} badge`}
+        width={size}
+        height={size}
+        style={{ objectFit: "contain", display: "block" }}
+      />
+    );
+  }
+
+  if (cert.id === "tryhackme-jr-pentester") {
+    return (
+      <div
+        style={{
+          width: size,
+          height: size,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: "10px",
+          background: cert.brandColorBg,
+          border: `1px solid ${cert.brandColor}40`,
+        }}
+      >
+        <SiTryhackme size={32} color={cert.brandColor} />
+      </div>
+    );
+  }
+
+  if (cert.id === "ccna") {
+    return (
+      <div
+        style={{
+          width: size,
+          height: size,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: "10px",
+          background: cert.brandColorBg,
+          border: `1px solid ${cert.brandColor}40`,
+        }}
+      >
+        <SiCisco size={36} color={cert.brandColor} />
+      </div>
+    );
+  }
+
+  if (cert.id === "sc-200") {
+    return (
+      <div
+        style={{
+          width: size,
+          height: size,
+          borderRadius: "10px",
+          background: cert.brandColorBg,
+          border: `1px solid ${cert.brandColor}40`,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "2px",
+        }}
+      >
+        <span
+          style={{
+            fontFamily: "var(--font-sora)",
+            fontWeight: 800,
+            fontSize: "11px",
+            color: cert.brandColor,
+            letterSpacing: "0.03em",
+          }}
+        >
+          SC-200
+        </span>
+        <span
+          style={{
+            fontSize: "8px",
+            color: cert.brandColor,
+            fontFamily: "var(--font-mono)",
+            opacity: 0.75,
+          }}
+        >
+          Microsoft
+        </span>
+      </div>
+    );
+  }
+
+  /* CEH, NPTEL and any other — styled text badge */
+  const abbr =
+    cert.id === "ceh-v13"
+      ? "CEH"
+      : cert.id === "nptel-cloud"
+      ? "NPTEL"
+      : cert.issuer.split(" ")[0]?.slice(0, 3).toUpperCase() ?? "???";
+
+  return (
+    <div
+      style={{
+        width: size,
+        height: size,
+        borderRadius: "10px",
+        background: cert.brandColorBg,
+        border: `1px solid ${cert.brandColor}40`,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "2px",
+      }}
+    >
+      <span
+        style={{
+          fontFamily: "var(--font-sora)",
+          fontWeight: 800,
+          fontSize: cert.id === "nptel-cloud" ? "10px" : "13px",
+          color: cert.brandColor,
+          letterSpacing: "0.04em",
+          lineHeight: 1,
+        }}
+      >
+        {abbr}
+      </span>
+      {cert.id === "ceh-v13" && (
+        <span
+          style={{
+            fontSize: "8px",
+            color: cert.brandColor,
+            fontFamily: "var(--font-mono)",
+            opacity: 0.8,
+          }}
+        >
+          v13
+        </span>
+      )}
+    </div>
+  );
+}
 
 export default function Certifications() {
   return (
@@ -36,7 +184,7 @@ export default function Certifications() {
               viewport={{ once: true, margin: "-40px" }}
               transition={{ duration: 0.4, delay: i * 0.07 }}
               className="cert-card-container"
-              style={{ height: "260px" }}
+              style={{ height: "280px" }}
             >
               <div className="cert-card-inner">
                 {/* Front */}
@@ -51,34 +199,20 @@ export default function Certifications() {
                   }}
                 >
                   {/* Brand banner */}
+                  <div style={{ height: "5px", background: cert.brandColor, flexShrink: 0 }} />
+
                   <div
                     style={{
-                      height: "6px",
-                      background: cert.brandColor,
-                      flexShrink: 0,
+                      padding: "20px",
+                      flex: 1,
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
                     }}
-                  />
-                  <div style={{ padding: "22px", flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-                    {/* Logo area */}
-                    <div
-                      style={{
-                        width: "48px",
-                        height: "48px",
-                        borderRadius: "10px",
-                        background: cert.brandColorBg,
-                        border: `1px solid ${cert.brandColor}40`,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        marginBottom: "14px",
-                        fontFamily: "var(--font-sora)",
-                        fontWeight: 800,
-                        fontSize: "13px",
-                        color: cert.brandColor,
-                        letterSpacing: "0.05em",
-                      }}
-                    >
-                      {cert.issuer.split(" ")[0]?.slice(0, 3).toUpperCase()}
+                  >
+                    {/* Badge / logo */}
+                    <div style={{ marginBottom: "14px" }}>
+                      <CertLogo cert={cert} />
                     </div>
 
                     <div>
@@ -86,30 +220,56 @@ export default function Certifications() {
                         style={{
                           fontFamily: "var(--font-sora)",
                           fontWeight: 700,
-                          fontSize: "0.85rem",
+                          fontSize: "0.82rem",
                           color: "var(--text-primary)",
                           lineHeight: 1.4,
-                          marginBottom: "8px",
+                          marginBottom: "6px",
                         }}
                       >
                         {cert.shortName}
                       </h3>
-                      <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "6px" }}>
+                      <p
+                        style={{
+                          fontSize: "11px",
+                          color: "var(--text-secondary)",
+                          marginBottom: "4px",
+                        }}
+                      >
                         {cert.issuer}
                       </p>
-                      <p style={{ fontSize: "11px", color: "var(--text-muted)" }}>
+                      <p
+                        style={{
+                          fontSize: "10px",
+                          color: "var(--text-muted)",
+                          fontFamily: "var(--font-mono)",
+                        }}
+                      >
                         {cert.issueDate}
                       </p>
                     </div>
 
-                    {/* Status */}
-                    <div style={{ marginTop: "12px" }}>
+                    <div style={{ marginTop: "10px" }}>
                       {cert.status === "active" ? (
                         <span className="badge-green">
                           <CheckCircle size={10} /> Active
                         </span>
                       ) : (
-                        <span style={{ display: "inline-flex", alignItems: "center", gap: "5px", padding: "3px 10px", background: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.3)", borderRadius: "999px", fontSize: "11px", color: "#f59e0b", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                        <span
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "5px",
+                            padding: "3px 10px",
+                            background: "rgba(245,158,11,0.1)",
+                            border: "1px solid rgba(245,158,11,0.3)",
+                            borderRadius: "999px",
+                            fontSize: "11px",
+                            color: "#f59e0b",
+                            fontWeight: 600,
+                            letterSpacing: "0.08em",
+                            textTransform: "uppercase",
+                          }}
+                        >
                           <Clock size={10} /> In Progress
                         </span>
                       )}
@@ -125,7 +285,7 @@ export default function Certifications() {
                     border: "1px solid var(--border)",
                     display: "flex",
                     flexDirection: "column",
-                    padding: "22px",
+                    padding: "20px",
                     gap: "10px",
                     justifyContent: "center",
                   }}
@@ -134,9 +294,10 @@ export default function Certifications() {
                     style={{
                       fontFamily: "var(--font-sora)",
                       fontWeight: 700,
-                      fontSize: "0.8rem",
+                      fontSize: "0.78rem",
                       color: "var(--accent-gold)",
                       marginBottom: "4px",
+                      lineHeight: 1.4,
                     }}
                   >
                     {cert.name}
@@ -145,32 +306,90 @@ export default function Certifications() {
                   <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                     {cert.validUntil && (
                       <div>
-                        <div style={{ fontSize: "10px", color: "var(--text-muted)", letterSpacing: "0.1em", textTransform: "uppercase" }}>Valid Until</div>
-                        <div style={{ fontSize: "13px", color: "var(--text-primary)", fontWeight: 500 }}>{cert.validUntil}</div>
+                        <div
+                          style={{
+                            fontSize: "10px",
+                            color: "var(--text-muted)",
+                            letterSpacing: "0.1em",
+                            textTransform: "uppercase",
+                          }}
+                        >
+                          Valid Until
+                        </div>
+                        <div
+                          style={{
+                            fontSize: "13px",
+                            color: "var(--text-primary)",
+                            fontWeight: 500,
+                          }}
+                        >
+                          {cert.validUntil}
+                        </div>
                       </div>
                     )}
                     {cert.validationCode && (
                       <div>
-                        <div style={{ fontSize: "10px", color: "var(--text-muted)", letterSpacing: "0.1em", textTransform: "uppercase" }}>Validation Code</div>
-                        <div style={{ fontSize: "10px", color: "var(--text-secondary)", fontFamily: "var(--font-mono)", wordBreak: "break-all" }}>{cert.validationCode}</div>
+                        <div
+                          style={{
+                            fontSize: "10px",
+                            color: "var(--text-muted)",
+                            letterSpacing: "0.1em",
+                            textTransform: "uppercase",
+                          }}
+                        >
+                          Validation Code
+                        </div>
+                        <div
+                          style={{
+                            fontSize: "9px",
+                            color: "var(--text-secondary)",
+                            fontFamily: "var(--font-mono)",
+                            wordBreak: "break-all",
+                          }}
+                        >
+                          {cert.validationCode}
+                        </div>
                       </div>
                     )}
-                    {cert.certNumber && !cert.validationCode && (
+                    {cert.certNumber && !cert.validationCode && !cert.credlyBadgeId && (
                       <div>
-                        <div style={{ fontSize: "10px", color: "var(--text-muted)", letterSpacing: "0.1em", textTransform: "uppercase" }}>Certificate #</div>
-                        <div style={{ fontSize: "10px", color: "var(--text-secondary)", fontFamily: "var(--font-mono)", wordBreak: "break-all" }}>{cert.certNumber}</div>
-                      </div>
-                    )}
-                    {cert.score && (
-                      <div>
-                        <div style={{ fontSize: "10px", color: "var(--text-muted)", letterSpacing: "0.1em", textTransform: "uppercase" }}>Score</div>
-                        <div style={{ fontSize: "12px", color: "var(--success)", fontWeight: 600 }}>{cert.score}</div>
+                        <div
+                          style={{
+                            fontSize: "10px",
+                            color: "var(--text-muted)",
+                            letterSpacing: "0.1em",
+                            textTransform: "uppercase",
+                          }}
+                        >
+                          Certificate #
+                        </div>
+                        <div
+                          style={{
+                            fontSize: "9px",
+                            color: "var(--text-secondary)",
+                            fontFamily: "var(--font-mono)",
+                            wordBreak: "break-all",
+                          }}
+                        >
+                          {cert.certNumber}
+                        </div>
                       </div>
                     )}
                     {cert.trainingCenter && (
                       <div>
-                        <div style={{ fontSize: "10px", color: "var(--text-muted)", letterSpacing: "0.1em", textTransform: "uppercase" }}>Training Centre</div>
-                        <div style={{ fontSize: "11px", color: "var(--text-secondary)" }}>{cert.trainingCenter}</div>
+                        <div
+                          style={{
+                            fontSize: "10px",
+                            color: "var(--text-muted)",
+                            letterSpacing: "0.1em",
+                            textTransform: "uppercase",
+                          }}
+                        >
+                          Training Centre
+                        </div>
+                        <div style={{ fontSize: "11px", color: "var(--text-secondary)" }}>
+                          {cert.trainingCenter}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -181,7 +400,12 @@ export default function Certifications() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn-outline-gold"
-                      style={{ padding: "8px 14px", fontSize: "12px", marginTop: "8px", justifyContent: "center" }}
+                      style={{
+                        padding: "8px 14px",
+                        fontSize: "12px",
+                        marginTop: "6px",
+                        justifyContent: "center",
+                      }}
                       aria-label={`Verify ${cert.name} certificate`}
                     >
                       <ExternalLink size={12} /> Verify

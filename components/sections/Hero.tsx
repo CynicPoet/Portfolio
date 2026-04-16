@@ -1,7 +1,8 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Mail, ChevronDown } from "lucide-react";
+import Image from "next/image";
+import { Mail, ChevronDown, Shield } from "lucide-react";
 import { FaGithub, FaLinkedinIn } from "react-icons/fa";
 import { SiTryhackme } from "react-icons/si";
 import TypewriterText from "@/components/ui/TypewriterText";
@@ -240,6 +241,78 @@ export default function Hero() {
               {s.icon}
             </a>
           ))}
+        </motion.div>
+
+        {/* Maharashtra Cyber credibility strip */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 1.1 }}
+          style={{
+            marginTop: "32px",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "12px",
+              padding: "10px 20px",
+              background: "rgba(196,150,45,0.06)",
+              border: "1px solid rgba(196,150,45,0.25)",
+              borderRadius: "12px",
+              backdropFilter: "blur(10px)",
+            }}
+          >
+            <Shield size={14} style={{ color: "var(--accent-gold)", flexShrink: 0 }} />
+            <div
+              style={{
+                width: "1px",
+                height: "28px",
+                background: "rgba(196,150,45,0.25)",
+              }}
+            />
+            <div
+              style={{
+                position: "relative",
+                width: "36px",
+                height: "37px",
+                flexShrink: 0,
+              }}
+            >
+              <Image
+                src="/logos/maha_cyber.png"
+                alt="Maharashtra Cyber — Government of Maharashtra"
+                fill
+                style={{ objectFit: "contain" }}
+                sizes="36px"
+              />
+            </div>
+            <div style={{ textAlign: "left" }}>
+              <div
+                style={{
+                  fontFamily: "var(--font-sora)",
+                  fontWeight: 700,
+                  fontSize: "12px",
+                  color: "var(--accent-gold)",
+                  lineHeight: 1.3,
+                }}
+              >
+                Maharashtra Cyber
+              </div>
+              <div
+                style={{
+                  fontSize: "10px",
+                  color: "var(--text-muted)",
+                  fontFamily: "var(--font-mono)",
+                }}
+              >
+                SOC Analyst Intern · Govt. of Maharashtra · 7 Months
+              </div>
+            </div>
+          </div>
         </motion.div>
       </div>
 
