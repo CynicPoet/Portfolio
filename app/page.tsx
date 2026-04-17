@@ -8,6 +8,7 @@ import Achievements from "@/components/sections/Achievements";
 import CertificatesGallery from "@/components/sections/CertificatesGallery";
 import Capstone from "@/components/sections/Capstone";
 import GraduationBook from "@/components/sections/GraduationBook";
+import Acknowledgments from "@/components/sections/Acknowledgments";
 import Contact from "@/components/sections/Contact";
 
 export default function Home() {
@@ -23,6 +24,7 @@ export default function Home() {
       <CertificatesGallery />
       <Capstone />
       <GraduationBook />
+      <Acknowledgments />
       <Contact />
     </>
   );
